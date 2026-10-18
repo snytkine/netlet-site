@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { buildSceneLayout, lerpVec3, supportsWebGL } from '../lib/meshScene'
+import { BUBBLE_SIZE, BUBBLE_VARIANTS, createHeroAssets } from './heroModels'
 import { useReducedMotion } from '../lib/useReducedMotion'
 
 /** Number of nodes in the 3D mesh. */
@@ -8,9 +9,9 @@ const NODE_COUNT = 14
 /** Number of messages flying between nodes. */
 const PACKET_COUNT = 10
 
-/** A message sphere animated along one edge. */
+/** A chat bubble animated along one edge. */
 interface FlyingPacket {
-  mesh: THREE.Mesh
+  mesh: THREE.Sprite
   edge: number
   t: number
   speed: number
@@ -18,8 +19,8 @@ interface FlyingPacket {
 }
 
 /**
- * Renders the hero 3D animation: a rotating peer-to-peer mesh of glowing nodes with
- * message spheres flying between them. Falls back to a static illustration when WebGL
+ * Renders the hero 3D animation: a rotating peer-to-peer mesh of laptops with
+ * chat bubbles flying between them. Falls back to a static illustration when WebGL
  * is unavailable and renders a single frame when the user prefers reduced motion.
  */
 export default function HeroScene() {
@@ -50,17 +51,14 @@ export default function HeroScene() {
     const layout = buildSceneLayout(NODE_COUNT, 3)
     const disposables: { dispose: () => void }[] = []
 
-    const nodeGeo = new THREE.SphereGeometry(0.2, 24, 24)
-    const nodeMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.35, metalness: 0.1 })
-    const haloGeo = new THREE.SphereGeometry(0.34, 24, 24)
-    const haloMat = new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.18 })
-    disposables.push(nodeGeo, nodeMat, haloGeo, haloMat)
+    const assets = createHeroAssets()
+    disposables.push(assets)
     for (const n of layout.nodes) {
-      const node = new THREE.Mesh(nodeGeo, nodeMat)
-      node.position.set(n.x, n.y, n.z)
-      const halo = new THREE.Mesh(haloGeo, haloMat)
-      node.add(halo)
-      group.add(node)
+      const laptop = assets.createLaptop()
+      laptop.position.set(n.x, n.y, n.z)
+      // Keep laptops upright and turn their screens away from the centre of the mesh.
+      laptop.rotation.y = Math.atan2(n.x, n.z)
+      group.add(laptop)
     }
 
     const points: THREE.Vector3[] = []
@@ -74,11 +72,8 @@ export default function HeroScene() {
     disposables.push(lineGeo, lineMat)
     group.add(new THREE.LineSegments(lineGeo, lineMat))
 
-    const packetGeo = new THREE.SphereGeometry(0.1, 16, 16)
-    const packetMat = new THREE.MeshBasicMaterial({ color: 0xf97316 })
-    disposables.push(packetGeo, packetMat)
-    const packets: FlyingPacket[] = Array.from({ length: PACKET_COUNT }, () => {
-      const mesh = new THREE.Mesh(packetGeo, packetMat)
+    const packets: FlyingPacket[] = Array.from({ length: PACKET_COUNT }, (_, i) => {
+      const mesh = assets.createBubble(i % BUBBLE_VARIANTS)
       group.add(mesh)
       return {
         mesh,
@@ -97,6 +92,9 @@ export default function HeroScene() {
         const to = layout.nodes[p.reverse ? a : b]
         const pos = lerpVec3(from, to, p.t)
         p.mesh.position.set(pos.x, pos.y, pos.z)
+        // Bubbles pop in as they leave a laptop and shrink away as they arrive.
+        const pop = Math.min(1, p.t * 6, (1 - p.t) * 6)
+        p.mesh.scale.setScalar(BUBBLE_SIZE * (0.4 + 0.6 * pop) * (1 + 0.08 * Math.sin(p.t * Math.PI * 6)))
       }
     }
 

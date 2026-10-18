@@ -5,12 +5,30 @@ const mocks = vi.hoisted(() => ({
   render: vi.fn(),
   dispose: vi.fn(),
   setSize: vi.fn(),
+  disposeAssets: vi.fn(),
 }))
 
 vi.mock('../lib/meshScene', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../lib/meshScene')>()),
   supportsWebGL: () => true,
 }))
+
+vi.mock('./heroModels', () => {
+  const object = () => ({
+    position: { set: vi.fn() },
+    rotation: { y: 0 },
+    scale: { setScalar: vi.fn() },
+  })
+  return {
+    BUBBLE_SIZE: 0.46,
+    BUBBLE_VARIANTS: 3,
+    createHeroAssets: () => ({
+      createLaptop: object,
+      createBubble: object,
+      dispose: mocks.disposeAssets,
+    }),
+  }
+})
 
 vi.mock('three', () => {
   class Obj {
@@ -83,6 +101,7 @@ describe('HeroScene with WebGL', () => {
     unmount()
     expect(cancel).toHaveBeenCalled()
     expect(mocks.dispose).toHaveBeenCalled()
+    expect(mocks.disposeAssets).toHaveBeenCalled()
   })
 
   it('renders only a single frame when reduced motion is preferred', () => {
