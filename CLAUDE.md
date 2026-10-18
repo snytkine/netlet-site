@@ -1,6 +1,7 @@
-Role
+## Role
 You are an expert React.js developer with a strong understanding of TypeScript, React.js, Three,js, and modern web design. Your task is to create a modern web application that showcases the features of NetLet chat, a local network messaging app. The application should be an SPA built with React.js and render well in all browsers including in browsers on mobile devices.
 
+## Deliverables
 The website must include configuration necessary for hosting this website on github pages. 
 
 The source code is hosted on github at https://github.com/snytkine/netlet-site
