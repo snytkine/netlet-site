@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import { HERO_BUBBLE_COLORS } from '../config/site'
+import { resolveBubbleColors } from '../lib/bubbleColors'
 
 /** Width of a laptop model in scene units (the model is centred on the origin). */
 export const LAPTOP_WIDTH = 0.62
@@ -7,17 +9,13 @@ export const LAPTOP_WIDTH = 0.62
 /** Base sprite size of a chat bubble in scene units. */
 export const BUBBLE_SIZE = 0.46
 
-/** Number of distinct bubble colour variants. */
-export const BUBBLE_VARIANTS = 3
-
-/** Bubble fill colours: warm orange, brand blue and teal. */
-const BUBBLE_COLORS = ['#f97316', '#3b82f6', '#14b8a6'] as const
-
 /** Shared, disposable resources for the hero scene's laptop and bubble models. */
 export interface HeroAssets {
   /** Builds a new laptop that shares geometry and materials; its front (+z) faces the viewer. */
   createLaptop: () => THREE.Group
-  /** Builds a chat bubble sprite; `variant` picks a colour. */
+  /** Number of distinct bubble colours (one variant per configured colour). */
+  bubbleVariants: number
+  /** Builds a chat bubble sprite; `variant` picks a colour and wraps around `bubbleVariants`. */
   createBubble: (variant: number) => THREE.Sprite
   /** Releases every geometry, material and texture created by these assets. */
   dispose: () => void
@@ -188,8 +186,11 @@ function paintBubble(ctx: CanvasRenderingContext2D, w: number, h: number, color:
  *
  * The laptop is assembled from rounded boxes: a silver base with a keyboard texture, a lid
  * tilted back on a hinge, a glowing chat-app screen and a small logo on the lid's back.
+ * Bubbles get one variant per colour; the colour list is sanitised by `resolveBubbleColors`.
+ *
+ * @param bubbleColors - CSS colours for the bubbles, defaults to `HERO_BUBBLE_COLORS`
  */
-export function createHeroAssets(): HeroAssets {
+export function createHeroAssets(bubbleColors: readonly string[] = HERO_BUBBLE_COLORS): HeroAssets {
   const disposables: { dispose: () => void }[] = []
   const track = <T extends { dispose: () => void }>(item: T): T => {
     disposables.push(item)
@@ -209,7 +210,8 @@ export function createHeroAssets(): HeroAssets {
   const screenGeo = track(new THREE.PlaneGeometry(0.92, 0.6))
   const logoGeo = track(new THREE.CircleGeometry(0.06, 24))
 
-  const bubbleMaterials = BUBBLE_COLORS.map((color) =>
+  const colors = resolveBubbleColors(bubbleColors)
+  const bubbleMaterials = colors.map((color) =>
     track(
       new THREE.SpriteMaterial({
         map: track(canvasTexture(128, 128, (ctx, w, h) => paintBubble(ctx, w, h, color))),
@@ -256,8 +258,10 @@ export function createHeroAssets(): HeroAssets {
 
       return laptop
     },
+    bubbleVariants: colors.length,
     createBubble: (variant) => {
-      const sprite = new THREE.Sprite(bubbleMaterials[((variant % BUBBLE_VARIANTS) + BUBBLE_VARIANTS) % BUBBLE_VARIANTS])
+      const count = bubbleMaterials.length
+      const sprite = new THREE.Sprite(bubbleMaterials[((variant % count) + count) % count])
       sprite.scale.setScalar(BUBBLE_SIZE)
       return sprite
     },

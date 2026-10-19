@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import * as THREE from 'three'
 import { buildSceneLayout, lerpVec3, supportsWebGL } from '../lib/meshScene'
-import { BUBBLE_SIZE, BUBBLE_VARIANTS, createHeroAssets } from './heroModels'
+import { BUBBLE_SIZE, createHeroAssets } from './heroModels'
 import { useReducedMotion } from '../lib/useReducedMotion'
 import { HERO_ANIMATION_SECONDS } from '../config/site'
 
@@ -100,7 +100,7 @@ export default function HeroScene({ durationSeconds = HERO_ANIMATION_SECONDS }: 
     group.add(new THREE.LineSegments(lineGeo, lineMat))
 
     const packets: FlyingPacket[] = Array.from({ length: PACKET_COUNT }, (_, i) => {
-      const mesh = assets.createBubble(i % BUBBLE_VARIANTS)
+      const mesh = assets.createBubble(i % assets.bubbleVariants)
       group.add(mesh)
       return {
         mesh,

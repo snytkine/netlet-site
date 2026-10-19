@@ -18,6 +18,17 @@ export const SITE_REPO_URL = 'https://github.com/snytkine/netlet-site'
  */
 export const HERO_ANIMATION_SECONDS = 20
 
+/** Largest number of bubble colours the home page animation supports. */
+export const HERO_BUBBLE_COLORS_MAX = 7
+
+/**
+ * Fill colours of the message bubbles flying through the home page animation, as CSS colours
+ * (hex, `rgb()`, `hsl()` or a colour name). Use between 1 and `HERO_BUBBLE_COLORS_MAX` (7)
+ * colours: bubbles are spread evenly across the list. Extra colours beyond the maximum and
+ * values the browser does not recognise are ignored. Initial values: orange, blue and teal.
+ */
+export const HERO_BUBBLE_COLORS: readonly string[] = ['#f97316', '#3b82f6', '#14b8a6']
+
 /** Supported desktop platforms. */
 export type Platform = 'mac' | 'windows'
 

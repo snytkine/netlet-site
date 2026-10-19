@@ -21,8 +21,8 @@ vi.mock('./heroModels', () => {
   })
   return {
     BUBBLE_SIZE: 0.46,
-    BUBBLE_VARIANTS: 3,
     createHeroAssets: () => ({
+      bubbleVariants: 3,
       createLaptop: object,
       createBubble: object,
       dispose: mocks.disposeAssets,

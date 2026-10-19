@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { DOWNLOADS, HERO_ANIMATION_SECONDS, detectPlatform } from './site'
+import {
+  DOWNLOADS,
+  HERO_ANIMATION_SECONDS,
+  HERO_BUBBLE_COLORS,
+  HERO_BUBBLE_COLORS_MAX,
+  detectPlatform,
+} from './site'
 
 describe('detectPlatform', () => {
   it('detects macOS', () => {
@@ -25,5 +31,14 @@ describe('HERO_ANIMATION_SECONDS', () => {
   it('is a finite, non-negative number of seconds (0 means no automatic stop)', () => {
     expect(Number.isFinite(HERO_ANIMATION_SECONDS)).toBe(true)
     expect(HERO_ANIMATION_SECONDS).toBeGreaterThanOrEqual(0)
+  })
+})
+
+describe('HERO_BUBBLE_COLORS', () => {
+  it('holds between 1 and the maximum number of non-empty colours', () => {
+    expect(HERO_BUBBLE_COLORS_MAX).toBe(7)
+    expect(HERO_BUBBLE_COLORS.length).toBeGreaterThanOrEqual(1)
+    expect(HERO_BUBBLE_COLORS.length).toBeLessThanOrEqual(HERO_BUBBLE_COLORS_MAX)
+    for (const color of HERO_BUBBLE_COLORS) expect(color.trim()).not.toBe('')
   })
 })
