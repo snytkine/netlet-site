@@ -26,6 +26,12 @@ Built with React 19, TypeScript, Vite, React Router and three.js.
 Each manual step renders a stylised mock until a real image is provided. Put the image in
 `public/screenshots/` and set `screenshot: '/netlet-site/screenshots/<file>.png'` on the step in `src/data/content.ts`.
 
+## Production build: minification and obfuscation
+
+`npm run build` minifies JS, CSS and `index.html`, strips `console.*` calls, emits no source maps and
+obfuscates our own code (`build/plugins.ts`). Vendor code (`vendor`, `three` chunks) is minified but not
+obfuscated, since obfuscating it would only bloat it. Dev server and tests are unaffected.
+
 ## Deployment (GitHub Pages)
 
 - Development happens on `develop`; `.github/workflows/ci.yml` lints, tests and builds it.
