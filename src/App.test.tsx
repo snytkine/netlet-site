@@ -42,6 +42,22 @@ describe('routing', () => {
     expect(document.title).toContain(useCase.title)
   })
 
+  it('words the office summary generically on the home page and on the office page', () => {
+    const summary = 'Multiple computers, one mesh. Chats never leave the local network.'
+    const { unmount } = renderAt('/')
+    expect(screen.getByText(summary)).toBeInTheDocument()
+    unmount()
+    renderAt('/use-cases/office')
+    expect(screen.getByText(summary)).toBeInTheDocument()
+    expect(screen.queryByText(/Seven computers/)).not.toBeInTheDocument()
+  })
+
+  it('asks the kids, not dinner, to come to the table on the home use-case page', () => {
+    renderAt('/use-cases/home')
+    expect(screen.getByText(/Ask kids to come to the table/)).toBeInTheDocument()
+    expect(screen.queryByText(/Ask dinner/)).not.toBeInTheDocument()
+  })
+
   it('shows 404 for an unknown use case or manual section', () => {
     renderAt('/use-cases/nope')
     expect(screen.getByRole('heading', { name: /404/ })).toBeInTheDocument()
@@ -140,5 +156,12 @@ describe('navigation', () => {
     renderAt('/')
     expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute('href', '#main')
     expect(screen.getByRole('contentinfo')).toHaveTextContent(/NetLet chat/)
+  })
+
+  it('has no link to the website source in the footer', () => {
+    renderAt('/')
+    const footer = screen.getByRole('contentinfo')
+    expect(within(footer).queryByRole('link')).not.toBeInTheDocument()
+    expect(footer).not.toHaveTextContent(/GitHub/i)
   })
 })

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { SITE_NAME, SITE_REPO_URL } from '../config/site'
+import { SITE_NAME } from '../config/site'
 import { NAV_ITEMS } from '../config/nav'
 import MeshLogo from './MeshLogo'
 
@@ -68,9 +68,6 @@ function Footer() {
         <p>
           © {YEAR} {SITE_NAME} chat. Messages stay on your local network.
         </p>
-        <a href={SITE_REPO_URL} rel="noreferrer" target="_blank">
-          Website source on GitHub
-        </a>
       </div>
     </footer>
   )

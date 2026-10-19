@@ -80,7 +80,7 @@ export const USE_CASES: readonly UseCase[] = [
     title: 'At home',
     summary: 'Four rooms, four computers, one direct mesh. No Internet required.',
     paragraphs: [
-      'Ask dinner to come to the table without shouting up the stairs. Every computer in the house connects directly to every other one, with your router acting as the hub.',
+      'Ask kids to come to the table without shouting up the stairs. Every computer in the house connects directly to every other one, with your router acting as the hub.',
       'Even if your Internet connection is down, the family chat keeps working.',
     ],
     bullets: ['Every room connected directly', 'Works during Internet outages', 'Nothing stored outside your home'],
@@ -88,7 +88,7 @@ export const USE_CASES: readonly UseCase[] = [
   {
     slug: 'office',
     title: 'In the office',
-    summary: 'Seven computers, one mesh. Chats never leave the local network.',
+    summary: 'Multiple computers, one mesh. Chats never leave the local network.',
     paragraphs: [
       'Keep team conversation inside the walls of your office. Computers connect directly to each other and the router simply provides the network.',
       'Your router may be connected to the Internet, but your chats never leave the local network — so there is no third-party service to trust or pay for.',
