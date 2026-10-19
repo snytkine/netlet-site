@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import type { KeyboardEvent } from 'react'
 import * as THREE from 'three'
 import { buildSceneLayout, lerpVec3, supportsWebGL } from '../lib/meshScene'
 import { BUBBLE_SIZE, BUBBLE_VARIANTS, createHeroAssets } from './heroModels'
 import { useReducedMotion } from '../lib/useReducedMotion'
+import { HERO_ANIMATION_SECONDS } from '../config/site'
+
+/** Accessible description of the animation, shared by every state of the component. */
+const SCENE_LABEL = '3D animation of chat devices connected in a mesh, exchanging messages directly'
 
 /** Number of nodes in the 3D mesh. */
 const NODE_COUNT = 14
@@ -18,15 +23,37 @@ interface FlyingPacket {
   reverse: boolean
 }
 
+/** Lets the component's event handlers drive the animation loop owned by the effect. */
+interface PlaybackControl {
+  /** Stops a running animation, or starts a stopped one for a fresh `durationSeconds`. */
+  toggle: () => void
+}
+
+/** Props of {@link HeroScene}. */
+interface HeroSceneProps {
+  /**
+   * Seconds of animation before it stops by itself; `0` disables the automatic stop.
+   * Defaults to `HERO_ANIMATION_SECONDS` from the site configuration.
+   */
+  durationSeconds?: number
+}
+
 /**
  * Renders the hero 3D animation: a rotating peer-to-peer mesh of laptops with
- * chat bubbles flying between them. Falls back to a static illustration when WebGL
- * is unavailable and renders a single frame when the user prefers reduced motion.
+ * chat bubbles flying between them. The animation stops by itself after
+ * `durationSeconds`, and a click (or Enter/Space) stops it earlier or starts it again.
+ * Falls back to a static illustration when WebGL is unavailable and renders a single
+ * non-interactive frame when the user prefers reduced motion.
+ *
+ * @param props - Component props.
  */
-export default function HeroScene() {
+export default function HeroScene({ durationSeconds = HERO_ANIMATION_SECONDS }: HeroSceneProps) {
   const hostRef = useRef<HTMLDivElement>(null)
+  const controlRef = useRef<PlaybackControl | null>(null)
   const reducedMotion = useReducedMotion()
   const [webgl] = useState(() => supportsWebGL())
+  const [playing, setPlaying] = useState(true)
+  const interactive = webgl && !reducedMotion
 
   useEffect(() => {
     const host = hostRef.current
@@ -109,7 +136,14 @@ export default function HeroScene() {
       camera.updateProjectionMatrix()
     }
     resize()
-    const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(resize) : null
+    /** True while the animation loop is scheduled; false when stopped or never started. */
+    let running = false
+    /** Resizes and, if the loop is not running, redraws because resizing clears the canvas. */
+    const onResize = () => {
+      resize()
+      if (!running) renderer.render(scene, camera)
+    }
+    const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(onResize) : null
     resizeObserver?.observe(host)
 
     const pointer = { x: 0, y: 0 }
@@ -128,11 +162,24 @@ export default function HeroScene() {
     let frame = 0
     let visible = true
     let last = performance.now()
-    /** Advances the animation and renders one frame. */
+    /** Seconds of animation played since the last start; only on-screen time counts. */
+    let elapsed = 0
+    const autoStop = durationSeconds > 0
+
+    /** Stops the loop, keeping the last rendered frame on the canvas. */
+    const stop = () => {
+      if (!running) return
+      running = false
+      cancelAnimationFrame(frame)
+      setPlaying(false)
+    }
+
+    /** Advances the animation and renders one frame; stops once the duration is used up. */
     const tick = (now: number) => {
       const dt = Math.min((now - last) / 1000, 0.1)
       last = now
       if (visible) {
+        elapsed += dt
         group.rotation.y += dt * 0.15
         group.rotation.x += (0.25 + pointer.y * 0.25 - group.rotation.x) * 0.04
         group.position.x += (pointer.x * 0.3 - group.position.x) * 0.04
@@ -147,8 +194,24 @@ export default function HeroScene() {
         placePackets()
         renderer.render(scene, camera)
       }
+      if (autoStop && elapsed >= durationSeconds) {
+        stop()
+        return
+      }
       frame = requestAnimationFrame(tick)
     }
+
+    /** Starts the loop with a fresh time budget. */
+    const start = () => {
+      if (running) return
+      running = true
+      elapsed = 0
+      last = performance.now()
+      setPlaying(true)
+      frame = requestAnimationFrame(tick)
+    }
+
+    controlRef.current = { toggle: () => (running ? stop() : start()) }
 
     const intersection =
       typeof IntersectionObserver === 'function'
@@ -158,9 +221,11 @@ export default function HeroScene() {
         : null
     intersection?.observe(host)
 
-    if (!reducedMotion) frame = requestAnimationFrame(tick)
+    if (!reducedMotion) start()
 
     return () => {
+      controlRef.current = null
+      running = false
       cancelAnimationFrame(frame)
       resizeObserver?.disconnect()
       intersection?.disconnect()
@@ -169,16 +234,41 @@ export default function HeroScene() {
       renderer.dispose()
       renderer.domElement.remove()
     }
-  }, [webgl, reducedMotion])
+  }, [webgl, reducedMotion, durationSeconds])
+
+  /** Toggles playback when Enter or Space is pressed on the focused animation. */
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    controlRef.current?.toggle()
+  }
+
+  if (!interactive) {
+    return (
+      <div ref={hostRef} className="hero-scene" role="img" aria-label={SCENE_LABEL}>
+        {!webgl && <StaticMesh />}
+      </div>
+    )
+  }
 
   return (
     <div
       ref={hostRef}
-      className="hero-scene"
-      role="img"
-      aria-label="3D animation of chat devices connected in a mesh, exchanging messages directly"
+      className="hero-scene hero-scene--interactive"
+      data-playing={playing}
+      role="button"
+      tabIndex={0}
+      aria-label={`${SCENE_LABEL}. ${playing ? 'Click to pause.' : 'Click to play.'}`}
+      onClick={() => controlRef.current?.toggle()}
+      onKeyDown={onKeyDown}
     >
-      {!webgl && <StaticMesh />}
+      {!playing && (
+        <span className="hero-scene__play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28">
+            <path d="M8 5v14l11-7z" fill="currentColor" />
+          </svg>
+        </span>
+      )}
     </div>
   )
 }

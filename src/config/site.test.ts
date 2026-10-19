@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DOWNLOADS, detectPlatform } from './site'
+import { DOWNLOADS, HERO_ANIMATION_SECONDS, detectPlatform } from './site'
 
 describe('detectPlatform', () => {
   it('detects macOS', () => {
@@ -18,5 +18,12 @@ describe('detectPlatform', () => {
 describe('DOWNLOADS', () => {
   it('offers Mac and Windows builds', () => {
     expect(DOWNLOADS.map((d) => d.platform)).toEqual(['mac', 'windows'])
+  })
+})
+
+describe('HERO_ANIMATION_SECONDS', () => {
+  it('is a finite, non-negative number of seconds (0 means no automatic stop)', () => {
+    expect(Number.isFinite(HERO_ANIMATION_SECONDS)).toBe(true)
+    expect(HERO_ANIMATION_SECONDS).toBeGreaterThanOrEqual(0)
   })
 })

@@ -11,6 +11,13 @@ export const TAGLINE = 'When the Internet drops, NetLet still works.'
 /** GitHub repository of this website. */
 export const SITE_REPO_URL = 'https://github.com/snytkine/netlet-site'
 
+/**
+ * How many seconds the home page 3D animation plays before it stops by itself.
+ * Visitors can click the animation to stop it earlier or to start it again; every start
+ * plays for this long. Set to `0` to let the animation run until the visitor stops it.
+ */
+export const HERO_ANIMATION_SECONDS = 20
+
 /** Supported desktop platforms. */
 export type Platform = 'mac' | 'windows'
 
