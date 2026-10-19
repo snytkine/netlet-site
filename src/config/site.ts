@@ -16,7 +16,7 @@ export const SITE_REPO_URL = 'https://github.com/snytkine/netlet-site'
  * Visitors can click the animation to stop it earlier or to start it again; every start
  * plays for this long. Set to `0` to let the animation run until the visitor stops it.
  */
-export const HERO_ANIMATION_SECONDS = 20
+export const HERO_ANIMATION_SECONDS = 10
 
 /** Largest number of bubble colours the home page animation supports. */
 export const HERO_BUBBLE_COLORS_MAX = 7
@@ -27,7 +27,7 @@ export const HERO_BUBBLE_COLORS_MAX = 7
  * colours: bubbles are spread evenly across the list. Extra colours beyond the maximum and
  * values the browser does not recognise are ignored. Initial values: orange, blue and teal.
  */
-export const HERO_BUBBLE_COLORS: readonly string[] = ['#f97316', '#3b82f6', '#14b8a6']
+export const HERO_BUBBLE_COLORS: readonly string[] = ['#3b82f6', '#14b8a6']
 
 /** Supported desktop platforms. */
 export type Platform = 'mac' | 'windows'
