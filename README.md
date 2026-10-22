@@ -1,32 +1,40 @@
-# React + TypeScript + Vite
+# NetLet chat website
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Marketing and documentation site for **NetLet chat**, a local network messaging app.
+Built with React 19, TypeScript, Vite, React Router and three.js.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Command            | Purpose                                  |
+| ------------------ | ---------------------------------------- |
+| `npm run dev`      | Dev server at http://localhost:5173/netlet-site/ |
+| `npm run build`    | Type-check and build to `dist/`          |
+| `npm run lint`     | Oxlint                                   |
+| `npm test`         | Unit and component tests (Vitest)        |
+| `npm run coverage` | Tests with coverage report               |
 
-## React Compiler
+## Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/pages` – Home, Features, Use Cases (home / office / events views), User Manual (7 sub-sections), FAQs, Download
+- `src/components` – layout, canvas logo (`MeshLogo`), three.js hero (`HeroScene`), SVG diagrams, mock screenshots
+- `src/lib` – pure, tested logic (mesh simulation, scene geometry, diagram layouts, hooks)
+- `src/data/content.ts` – all marketing and manual copy
+- `src/config/site.ts` – **download URLs** (placeholders until the first release is published)
 
-## Expanding the Oxlint configuration
+### Replacing manual screenshots
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+Each manual step renders a stylised mock until a real image is provided. Put the image in
+`public/screenshots/` and set `screenshot: '/netlet-site/screenshots/<file>.png'` on the step in `src/data/content.ts`.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+## Production build: minification and obfuscation
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+`npm run build` minifies JS, CSS and `index.html`, strips `console.*` calls, emits no source maps and
+obfuscates our own code (`build/plugins.ts`). Vendor code (`vendor`, `three` chunks) is minified but not
+obfuscated, since obfuscating it would only bloat it. Dev server and tests are unaffected.
+
+## Deployment (GitHub Pages)
+
+- Development happens on `develop`; `.github/workflows/ci.yml` lints, tests and builds it.
+- `.github/workflows/deploy.yml` deploys **only** from `main` (a direct commit or a merge into `main`).
+- The build copies `index.html` to `404.html` so deep links work on GitHub Pages.
+- One-time setup: repository **Settings → Pages → Source: GitHub Actions**.
