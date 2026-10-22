@@ -10,10 +10,10 @@ import { minifyIndexHtml, obfuscateAppChunks } from './build/plugins.ts'
  * `console.*` calls are stripped. Vendor code lives in separate chunks (`vendor`, `three`) so the
  * obfuscator can leave it alone.
  *
- * `base` must match the GitHub Pages project path (https://snytkine.github.io/netlet-site/).
+ * `base` is the site root because the site is served from the custom domain https://netlet.app/.
  */
 export default defineConfig({
-  base: '/netlet-site/',
+  base: '/',
   build: {
     chunkSizeWarningLimit: 700, // three.js is lazy loaded and inherently large
     sourcemap: false,
