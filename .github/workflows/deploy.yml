@@ -5,6 +5,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Manual re-runs from the Actions tab; the `if` guards below still restrict them to main.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,7 +26,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Match the local dev environment (Node 24 / npm 11) that generates
+          # package-lock.json. Older npm versions can resolve optional deps
+          # differently and make `npm ci` fail with a lockfile-out-of-sync error.
+          node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run lint
@@ -32,6 +37,7 @@ jobs:
       - run: npm run build
       # GitHub Pages has no SPA fallback: serving index.html as 404.html makes deep links work.
       - run: cp dist/index.html dist/404.html
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
