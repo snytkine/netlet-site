@@ -7,7 +7,7 @@ Built with React 19, TypeScript, Vite, React Router and three.js.
 
 | Command            | Purpose                                  |
 | ------------------ | ---------------------------------------- |
-| `npm run dev`      | Dev server at http://localhost:5173/netlet-site/ |
+| `npm run dev`      | Dev server at http://localhost:5173/ |
 | `npm run build`    | Type-check and build to `dist/`          |
 | `npm run lint`     | Oxlint                                   |
 | `npm test`         | Unit and component tests (Vitest)        |
@@ -24,7 +24,7 @@ Built with React 19, TypeScript, Vite, React Router and three.js.
 ### Replacing manual screenshots
 
 Each manual step renders a stylised mock until a real image is provided. Put the image in
-`public/screenshots/` and set `screenshot: '/netlet-site/screenshots/<file>.png'` on the step in `src/data/content.ts`.
+`public/screenshots/` and set `screenshot: '/screenshots/<file>.png'` on the step in `src/data/content.ts`.
 
 ## Production build: minification and obfuscation
 
