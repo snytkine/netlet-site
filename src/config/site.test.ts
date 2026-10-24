@@ -4,6 +4,9 @@ import {
   HERO_ANIMATION_SECONDS,
   HERO_BUBBLE_COLORS,
   HERO_BUBBLE_COLORS_MAX,
+  RELEASES_API_URL,
+  RELEASES_DOWNLOAD_PREFIX,
+  RELEASES_PAGE_URL,
   detectPlatform,
 } from './site'
 
@@ -24,6 +27,14 @@ describe('detectPlatform', () => {
 describe('DOWNLOADS', () => {
   it('offers Mac and Windows builds', () => {
     expect(DOWNLOADS.map((d) => d.platform)).toEqual(['mac', 'windows'])
+  })
+  it('falls back to the latest releases page of the public site repository', () => {
+    for (const option of DOWNLOADS) expect(option.url).toBe(RELEASES_PAGE_URL)
+    expect(RELEASES_PAGE_URL).toBe('https://github.com/snytkine/netlet-site/releases/latest')
+  })
+  it('points the release lookup and download links at the same repository', () => {
+    expect(RELEASES_API_URL).toBe('https://api.github.com/repos/snytkine/netlet-site/releases/latest')
+    expect(RELEASES_DOWNLOAD_PREFIX).toBe('https://github.com/snytkine/netlet-site/releases/download/')
   })
 })
 
