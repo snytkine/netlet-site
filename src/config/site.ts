@@ -1,5 +1,5 @@
 /**
- * Central site configuration. Update these values when real release assets exist.
+ * Central site configuration.
  */
 
 /** Product name shown across the site. */
@@ -40,22 +40,34 @@ export interface DownloadOption {
   url: string
 }
 
+/** GitHub repository that holds the installer downloads (public, unlike the app's source repository). */
+export const RELEASES_REPO = 'snytkine/netlet-site'
+
+/** Page listing the newest release. Used as the download link when the release lookup fails. */
+export const RELEASES_PAGE_URL = `https://github.com/${RELEASES_REPO}/releases/latest`
+
+/** GitHub API endpoint that describes the newest published release (no drafts or pre-releases). */
+export const RELEASES_API_URL = `https://api.github.com/repos/${RELEASES_REPO}/releases/latest`
+
+/** Every installer link must start with this, so a malformed API reply can never point elsewhere. */
+export const RELEASES_DOWNLOAD_PREFIX = `https://github.com/${RELEASES_REPO}/releases/download/`
+
 /**
- * Download links. NOTE: placeholders until the first NetLet release is published —
- * point these at the real release assets.
+ * Download links. The URL is the fallback: the download buttons replace it with the direct link
+ * to the installer of the latest release (see `src/lib/release.ts`) once GitHub has answered.
  */
 export const DOWNLOADS: readonly DownloadOption[] = [
   {
     platform: 'mac',
     label: 'Download for Mac',
     requirement: 'macOS 12 or later',
-    url: 'https://github.com/snytkine/netlet/releases/latest',
+    url: RELEASES_PAGE_URL,
   },
   {
     platform: 'windows',
     label: 'Download for Windows',
     requirement: 'Windows 10 or later',
-    url: 'https://github.com/snytkine/netlet/releases/latest',
+    url: RELEASES_PAGE_URL,
   },
 ]
 

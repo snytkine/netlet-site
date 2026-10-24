@@ -109,6 +109,13 @@ describe('routing', () => {
     expect(screen.getByRole('link', { name: 'Download for Windows' })).toHaveAttribute('href')
   })
 
+  it('explains first launch, checksums and privacy on the download page', () => {
+    renderAt('/download')
+    expect(screen.getByRole('heading', { name: 'Before you install' })).toBeInTheDocument()
+    expect(screen.getByText(/SmartScreen/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Privacy' })).toBeInTheDocument()
+  })
+
   it('lists the visitor’s detected platform first', () => {
     vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('Mozilla/5.0 (Windows NT 10.0; Win64; x64)')
     renderAt('/download')

@@ -1,9 +1,17 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
-import { afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, vi } from 'vitest'
+import { resetLatestReleaseCache } from '../lib/release'
+
+/** No test may reach the real network: the release lookup fails unless a test stubs `fetch` itself. */
+beforeEach(() => {
+  vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('network disabled in tests'))))
+})
 
 afterEach(() => {
   cleanup()
+  resetLatestReleaseCache()
+  vi.unstubAllGlobals()
 })
 
 /** Minimal 2D context stub so canvas-based components can run under jsdom. */
