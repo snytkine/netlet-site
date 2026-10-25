@@ -29,8 +29,18 @@ const VERSION_PATTERN = /^v?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)$/
  * @param value - anything, usually parsed JSON
  * @returns `true` when the value is a non-null, non-array object
  */
-function isRecord(value: unknown): value is Record<string, unknown> {
+export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/**
+ * Extracts the version from a release tag.
+ *
+ * @param tag - a Git tag such as `v0.2.0` or `0.2.0`
+ * @returns the version without the leading `v`, or `null` when the tag is not `x.y.z`
+ */
+export function versionFromTag(tag: string): string | null {
+  return VERSION_PATTERN.exec(tag)?.[1] ?? null
 }
 
 /**
@@ -57,7 +67,7 @@ function pickInstaller(assets: ReleaseAsset[], suffix: string): ReleaseAsset | u
  */
 export function parseLatestRelease(data: unknown): LatestRelease | null {
   if (!isRecord(data) || typeof data.tag_name !== 'string') return null
-  const version = VERSION_PATTERN.exec(data.tag_name)?.[1]
+  const version = versionFromTag(data.tag_name)
   if (!version) return null
 
   const rawAssets = Array.isArray(data.assets) ? data.assets : []

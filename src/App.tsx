@@ -6,6 +6,7 @@ import Features from './pages/Features'
 import Home from './pages/Home'
 import Manual from './pages/Manual'
 import NotFound from './pages/NotFound'
+import ReleaseNotesPage from './pages/ReleaseNotes'
 import UseCases from './pages/UseCases'
 
 /**
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/manual/:slug" element={<Manual />} />
         <Route path="/faqs" element={<Faqs />} />
         <Route path="/download" element={<Download />} />
+        <Route path="/release-notes" element={<ReleaseNotesPage />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

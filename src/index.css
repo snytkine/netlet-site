@@ -267,9 +267,20 @@ img, svg { max-width: 100%; }
 .download-card { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .download-card__req { font-size: 0.85rem; color: var(--muted); }
 .download-note { margin: 16px auto 0; max-width: 40rem; font-size: 0.9rem; color: var(--muted); }
+.download-more { margin: 14px 0 0; font-size: 0.85rem; color: var(--muted); }
 .download-notes { margin-top: 40px; text-align: left; }
 .download-notes ul { padding-left: 1.2rem; }
 .download-notes li { margin-bottom: 10px; }
+
+/* Release notes */
+.release { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+.release h2 { margin-bottom: 4px; }
+.release__meta { margin: 0 0 12px; font-size: 0.9rem; color: var(--muted); }
+.markdown h3, .markdown h4, .markdown h5 { margin: 20px 0 6px; }
+.markdown ul, .markdown ol { padding-left: 1.2rem; }
+.markdown li { margin-bottom: 6px; }
+.markdown pre { overflow-x: auto; padding: 12px; border-radius: 8px; background: var(--tint); font-size: 0.9rem; }
+.release-more { margin-top: 32px; font-size: 0.9rem; }
 
 /* Footer */
 .site-footer { border-top: 1px solid var(--border); padding: 28px 0; font-size: 0.9rem; color: var(--muted); }

@@ -49,6 +49,15 @@ export const RELEASES_PAGE_URL = `https://github.com/${RELEASES_REPO}/releases/l
 /** GitHub API endpoint that describes the newest published release (no drafts or pre-releases). */
 export const RELEASES_API_URL = `https://api.github.com/repos/${RELEASES_REPO}/releases/latest`
 
+/** Page that lists every release of the app, newest first, including the older ones. */
+export const ALL_RELEASES_URL = `https://github.com/${RELEASES_REPO}/releases`
+
+/** How many of the newest releases the release notes page shows. */
+export const RELEASE_NOTES_COUNT = 10
+
+/** GitHub API endpoint that lists the newest published releases (no drafts), with their notes. */
+export const RELEASES_LIST_API_URL = `https://api.github.com/repos/${RELEASES_REPO}/releases?per_page=${RELEASE_NOTES_COUNT}`
+
 /** Every installer link must start with this, so a malformed API reply can never point elsewhere. */
 export const RELEASES_DOWNLOAD_PREFIX = `https://github.com/${RELEASES_REPO}/releases/download/`
 

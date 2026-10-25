@@ -116,6 +116,21 @@ describe('routing', () => {
     expect(screen.getByRole('heading', { name: 'Privacy' })).toBeInTheDocument()
   })
 
+  it('links to the release notes and to the older releases on GitHub under the download buttons', () => {
+    renderAt('/download')
+    expect(screen.getByRole('link', { name: 'Release notes' })).toHaveAttribute('href', '/release-notes')
+    expect(screen.getByRole('link', { name: 'Older releases' })).toHaveAttribute(
+      'href',
+      'https://github.com/snytkine/netlet-site/releases',
+    )
+  })
+
+  it('renders the release notes page at /release-notes', async () => {
+    renderAt('/release-notes')
+    expect(screen.getByRole('heading', { level: 1, name: 'Release notes' })).toBeInTheDocument()
+    expect(await screen.findByText(/Could not load the release notes/)).toBeInTheDocument()
+  })
+
   it('lists the visitor’s detected platform first', () => {
     vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('Mozilla/5.0 (Windows NT 10.0; Win64; x64)')
     renderAt('/download')

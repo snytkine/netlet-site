@@ -4,8 +4,10 @@ import {
   fetchLatestRelease,
   formatSize,
   loadLatestRelease,
+  isRecord,
   parseLatestRelease,
   resetLatestReleaseCache,
+  versionFromTag,
 } from './release'
 
 /** Builds an API asset entry under this site's release downloads. */
@@ -125,6 +127,26 @@ describe('loadLatestRelease', () => {
     resetLatestReleaseCache()
     await loadLatestRelease()
     expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('versionFromTag', () => {
+  it('strips the leading v and accepts a suffix', () => {
+    expect(versionFromTag('v0.2.0')).toBe('0.2.0')
+    expect(versionFromTag('1.0.0-rc.1')).toBe('1.0.0-rc.1')
+  })
+  it('rejects anything that is not x.y.z', () => {
+    expect(versionFromTag('latest')).toBeNull()
+    expect(versionFromTag('v1.2')).toBeNull()
+  })
+})
+
+describe('isRecord', () => {
+  it('accepts plain objects only', () => {
+    expect(isRecord({})).toBe(true)
+    expect(isRecord(null)).toBe(false)
+    expect(isRecord([])).toBe(false)
+    expect(isRecord('text')).toBe(false)
   })
 })
 

@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ALL_RELEASES_URL,
   DOWNLOADS,
   HERO_ANIMATION_SECONDS,
   HERO_BUBBLE_COLORS,
   HERO_BUBBLE_COLORS_MAX,
   RELEASES_API_URL,
   RELEASES_DOWNLOAD_PREFIX,
+  RELEASES_LIST_API_URL,
   RELEASES_PAGE_URL,
+  RELEASE_NOTES_COUNT,
   detectPlatform,
 } from './site'
 
@@ -35,6 +38,20 @@ describe('DOWNLOADS', () => {
   it('points the release lookup and download links at the same repository', () => {
     expect(RELEASES_API_URL).toBe('https://api.github.com/repos/snytkine/netlet-site/releases/latest')
     expect(RELEASES_DOWNLOAD_PREFIX).toBe('https://github.com/snytkine/netlet-site/releases/download/')
+  })
+})
+
+describe('release notes configuration', () => {
+  it('links to the releases page and lists the newest releases of the same repository', () => {
+    expect(ALL_RELEASES_URL).toBe('https://github.com/snytkine/netlet-site/releases')
+    expect(RELEASES_LIST_API_URL).toBe(
+      `https://api.github.com/repos/snytkine/netlet-site/releases?per_page=${RELEASE_NOTES_COUNT}`,
+    )
+  })
+  it('shows a sensible number of releases', () => {
+    expect(Number.isInteger(RELEASE_NOTES_COUNT)).toBe(true)
+    expect(RELEASE_NOTES_COUNT).toBeGreaterThan(0)
+    expect(RELEASE_NOTES_COUNT).toBeLessThanOrEqual(100)
   })
 })
 

@@ -1,9 +1,12 @@
+import { Link } from 'react-router-dom'
 import DownloadButtons from '../components/DownloadButtons'
+import { ALL_RELEASES_URL } from '../config/site'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 /**
  * Download page with a button for each supported platform (Mac and Windows), notes for first
- * launch on each system, and a privacy statement.
+ * launch on each system, and a privacy statement. Small links under the buttons lead to the release
+ * notes page and to the older releases on GitHub.
  */
 export default function Download() {
   useDocumentTitle('Download')
@@ -12,6 +15,13 @@ export default function Download() {
       <h1>Download NetLet</h1>
       <p className="lead">Pick your platform. NetLet is free and needs no account.</p>
       <DownloadButtons showStatus />
+      <p className="download-more">
+        <Link to="/release-notes">Release notes</Link>
+        <span aria-hidden="true"> · </span>
+        <a href={ALL_RELEASES_URL} rel="noreferrer">
+          Older releases
+        </a>
+      </p>
       <section className="download-notes" aria-labelledby="download-notes-heading">
         <h2 id="download-notes-heading">Before you install</h2>
         <ul>
@@ -35,7 +45,7 @@ export default function Download() {
         <p>
           NetLet only talks to computers on your own local network. It makes no connections to the Internet and collects
           no data. The app does not check for updates: to update, download the new version from this page. This page
-          asks GitHub for the latest version number when it opens.
+          asks GitHub for the latest version number when it opens, and the release notes page asks GitHub for the notes.
         </p>
       </section>
     </div>
