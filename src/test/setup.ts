@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { resetLatestReleaseCache } from '../lib/release'
+import { resetReleaseNotesCache } from '../lib/releaseNotes'
 
 /** No test may reach the real network: the release lookup fails unless a test stubs `fetch` itself. */
 beforeEach(() => {
@@ -11,6 +12,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup()
   resetLatestReleaseCache()
+  resetReleaseNotesCache()
   vi.unstubAllGlobals()
 })
 
