@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Get help with NetLet chat, the local network messaging app: troubleshooting, answers to common questions and how to contact us." />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Support – NetLet chat</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #1b1f27;
+        --muted: #5b6472;
+        --accent: #2563eb;
+        --rule: #e3e7ee;
+        --card: #f5f7fb;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #11151c;
+          --fg: #e8ecf3;
+          --muted: #9aa5b6;
+          --accent: #7aa7ff;
+          --rule: #262d3a;
+          --card: #181e29;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.65 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      }
+      main {
+        max-width: 44rem;
+        margin: 0 auto;
+        padding: 2.5rem 1rem 4rem;
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+        margin: 0 0 0.25rem;
+      }
+      h2 {
+        font-size: 1.2rem;
+        margin: 2.25rem 0 0.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--rule);
+      }
+      h3 {
+        font-size: 1rem;
+        margin: 1.25rem 0 0.25rem;
+      }
+      p,
+      li {
+        margin: 0.5rem 0;
+      }
+      ul {
+        padding-left: 1.25rem;
+      }
+      a {
+        color: var(--accent);
+      }
+      .meta {
+        color: var(--muted);
+        margin: 0 0 1.5rem;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--rule);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin: 1.5rem 0;
+      }
+      .card p {
+        margin: 0;
+      }
+      nav {
+        margin-bottom: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav><a href="/">&larr; NetLet chat</a></nav>
+
+      <h1>Support</h1>
+      <p class="meta">Help for NetLet chat, the local network messaging app</p>
+
+      <div class="card">
+        <p>
+          <strong>Need help or found a problem?</strong> Open an issue at
+          <a href="https://github.com/snytkine/netlet-site/issues">github.com/snytkine/netlet-site/issues</a>. Tell us your app
+          version (Settings &rarr; About), your operating system, and what happened. Please do not include private information.
+        </p>
+      </div>
+
+      <h2>Quick answers</h2>
+      <p>
+        The <a href="/manual">User Manual</a> and the <a href="/faqs">FAQs</a> on this site explain how NetLet works. Common problems
+        are below.
+      </p>
+
+      <h3>I can't connect to the host</h3>
+      <ul>
+        <li>Make sure both computers are on the same local network (the same Wi-Fi or office network).</li>
+        <li>Check the address. The host's address is shown in the status bar at the top of the chat while hosting, and you can copy it from the Server view.</li>
+        <li>If the host chose a custom port, include it after the address, for example <code>192.168.1.20:44444</code>.</li>
+        <li>
+          Some guest or "isolated" Wi-Fi networks stop computers from talking to each other. Try a different network or ask the
+          network's owner.
+        </li>
+      </ul>
+
+      <h3>macOS asks about Local Network access, or nothing connects</h3>
+      <ul>
+        <li>
+          Open <strong>System Settings &rarr; Privacy &amp; Security &rarr; Local Network</strong> and make sure NetLet is switched on.
+        </li>
+        <li>
+          When hosting, allow incoming connections if macOS asks, or check that the firewall under
+          <strong>System Settings &rarr; Network &rarr; Firewall</strong> is not blocking NetLet.
+        </li>
+      </ul>
+
+      <h3>The host went offline</h3>
+      <p>
+        NetLet first tries to reconnect to the host. If that fails, another person in the chat can be asked to take over as host,
+        and only if they agree.
+      </p>
+
+      <h3>Where are my messages stored? How do I delete them?</h3>
+      <p>
+        Only on your own computer. Delete them with <strong>Clear message history</strong> in Settings. See the
+        <a href="/privacy.html">Privacy Policy</a> for details.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        The best way to reach us is the
+        <a href="https://github.com/snytkine/netlet-site/issues">issue tracker on GitHub</a>.
+      </p>
+    </main>
+  </body>
+</html>
