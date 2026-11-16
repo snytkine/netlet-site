@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -12,6 +12,11 @@ function renderAt(path: string) {
       <App />
     </MemoryRouter>,
   )
+}
+
+/** Finishes the exit animation of the page transition, which jsdom never runs by itself. */
+function finishPageTransition() {
+  fireEvent.animationEnd(document.querySelector('.page-transition')!)
 }
 
 describe('routing', () => {
@@ -158,8 +163,45 @@ describe('navigation', () => {
     const user = userEvent.setup()
     renderAt('/')
     await user.click(within(screen.getByRole('navigation', { name: 'Primary' })).getByText('FAQs'))
+    finishPageTransition()
     expect(screen.getByRole('heading', { level: 1, name: 'FAQs' })).toBeInTheDocument()
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0)
+  })
+
+  it('animates the old page out before showing the new one', async () => {
+    const user = userEvent.setup()
+    renderAt('/')
+    await user.click(within(screen.getByRole('navigation', { name: 'Primary' })).getByText('User Manual'))
+    expect(document.querySelector('.page-transition')).toHaveClass('page-transition--exit')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Skip the Internet/)
+    finishPageTransition()
+    expect(document.querySelector('.page-transition')).toHaveClass('page-transition--enter')
+    expect(screen.getByRole('heading', { level: 2, name: MANUAL[0].title })).toBeInTheDocument()
+  })
+
+  it('shows a glass icon next to every navigation entry', () => {
+    renderAt('/')
+    const links = within(screen.getByRole('navigation', { name: 'Primary' })).getAllByRole('link')
+    const icons = links.map((a) => a.querySelector('.glass-icon')?.className)
+    expect(icons).toEqual([
+      'glass-icon glass-icon--features',
+      'glass-icon glass-icon--use-cases',
+      'glass-icon glass-icon--manual',
+      'glass-icon glass-icon--faqs',
+      undefined,
+    ])
+  })
+
+  it('switches between light and dark mode from the header', async () => {
+    const user = userEvent.setup()
+    renderAt('/')
+    const toggle = within(screen.getByRole('banner')).getByRole('switch', { name: 'Dark mode' })
+    expect(document.documentElement.dataset.theme).toBe('light')
+    await user.click(toggle)
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(toggle).toHaveAttribute('aria-checked', 'true')
+    await user.click(toggle)
+    expect(document.documentElement.dataset.theme).toBe('light')
   })
 
   it('toggles the mobile menu and closes it after navigating', async () => {

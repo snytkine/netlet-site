@@ -7,6 +7,12 @@
   --border: #e2e8f0;
   --accent: #2563eb;
   --accent-dark: #1d4ed8;
+  /* Solid accent fills that carry white text (buttons, badges); same blue in both themes. */
+  --accent-fill: #2563eb;
+  --accent-fill-hover: #1d4ed8;
+  --surface: #ffffff;
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --switch-off: #c9d1dc;
   --warm: #f97316;
   --radius: 16px;
   --shadow: 0 10px 30px -12px rgba(30, 58, 138, 0.18);
@@ -20,6 +26,24 @@
   text-rendering: optimizeLegibility;
 }
 
+:root[data-theme='dark'] {
+  --text: #cbd5e1;
+  --text-h: #f1f5f9;
+  --muted: #94a3b8;
+  --bg: #0b1220;
+  --tint: #111c30;
+  --border: #233047;
+  --accent: #62a6ff;
+  --accent-dark: #9cc6ff;
+  --accent-fill-hover: #3b82f6;
+  --surface: #131d31;
+  --header-bg: rgba(11, 18, 32, 0.85);
+  --switch-off: #46546b;
+  --shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
 *,
 *::before,
 *::after {
@@ -29,6 +53,9 @@
 body {
   margin: 0;
   background: var(--bg);
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
 }
 
 h1,
@@ -59,7 +86,7 @@ img, svg { max-width: 100%; }
   position: absolute;
   left: -999px;
   top: 0;
-  background: var(--accent);
+  background: var(--accent-fill);
   color: #fff;
   padding: 0.5rem 1rem;
   z-index: 100;
@@ -85,7 +112,7 @@ img, svg { max-width: 100%; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--header-bg);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
@@ -106,13 +133,21 @@ img, svg { max-width: 100%; }
   font-size: 1.3rem;
 }
 .brand__sub { color: var(--muted); font-weight: 500; }
-.nav { display: flex; align-items: center; gap: 6px; }
+.nav { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .nav a:not(.button) {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   color: var(--text);
   text-decoration: none;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 6px 12px 6px 7px;
+  border-radius: 12px;
   font-weight: 500;
+  white-space: nowrap;
+  perspective: 320px;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 .nav a:not(.button):hover,
 .nav a.active { background: var(--tint); color: var(--accent-dark); }
@@ -128,20 +163,142 @@ img, svg { max-width: 100%; }
   color: var(--text-h);
 }
 
+/* Glass icons (navigation) */
+.glass-icon {
+  --icon-a: #6db4ff;
+  --icon-b: #1560e0;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 30%;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--icon-a), var(--icon-b));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.75),
+    inset 0 -4px 7px rgba(0, 20, 80, 0.3),
+    0 3px 8px color-mix(in srgb, var(--icon-b) 45%, transparent);
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.4s ease;
+}
+.glass-icon--features { --icon-a: #8fd3ff; --icon-b: #2a86e8; }
+.glass-icon--use-cases { --icon-a: #7aa7f5; --icon-b: #1d49ad; }
+.glass-icon--faqs { --icon-a: #b7c9ea; --icon-b: #4468b0; }
+/* Upper gloss: the light reflection on the glass */
+.glass-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 48% 0;
+  border-radius: inherit;
+  border-bottom-left-radius: 60% 30%;
+  border-bottom-right-radius: 60% 30%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.08));
+}
+/* Sheen that sweeps across on hover */
+.glass-icon::after {
+  content: '';
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.75) 50%, transparent 58%);
+  transform: translateX(-70%);
+  transition: transform 0.7s ease;
+}
+.glass-icon svg {
+  position: relative;
+  z-index: 1;
+  width: 66%;
+  height: 66%;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1px rgba(0, 25, 80, 0.45));
+}
+.nav a:hover .glass-icon,
+.nav a:focus-visible .glass-icon {
+  transform: rotateX(14deg) rotateY(-16deg) translateY(-2px) scale(1.1);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 -4px 7px rgba(0, 20, 80, 0.3),
+    5px 9px 14px color-mix(in srgb, var(--icon-b) 45%, transparent);
+}
+.nav a:hover .glass-icon::after,
+.nav a:focus-visible .glass-icon::after { transform: translateX(70%); }
+
+/* Theme toggle (macOS-style switch) */
+.theme-toggle { display: flex; align-items: center; gap: 7px; flex: none; }
+.theme-toggle__icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.switch {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 13px;
+  cursor: pointer;
+  background: var(--switch-off);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: background-color 0.25s ease;
+}
+.switch[aria-checked='true'] { background: var(--accent); }
+.switch__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+.switch[aria-checked='true'] .switch__knob { transform: translateX(18px); }
+
+/* Page transitions */
+.page-transition--enter { animation: page-in 0.38s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.page-transition--exit { animation: page-out 0.2s ease-in both; }
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+    filter: blur(4px);
+  }
+}
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
 /* Buttons */
 .button {
   display: inline-block;
-  background: var(--accent);
+  background: var(--accent-fill);
   color: #fff;
   text-decoration: none;
   font-weight: 600;
   padding: 12px 24px;
   border-radius: 999px;
-  border: 2px solid var(--accent);
+  border: 2px solid var(--accent-fill);
   transition: background 0.15s, transform 0.15s;
 }
-.button:hover { background: var(--accent-dark); transform: translateY(-1px); }
-.button--secondary { background: #fff; color: var(--accent); }
+.button:hover { background: var(--accent-fill-hover); transform: translateY(-1px); }
+.button--secondary { background: var(--surface); color: var(--accent); }
 .button--secondary:hover { background: var(--tint); }
 .button--small { padding: 8px 18px; margin-left: 6px; }
 
@@ -176,7 +333,7 @@ img, svg { max-width: 100%; }
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-fill);
   color: #fff;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
   pointer-events: none;
@@ -185,7 +342,7 @@ img, svg { max-width: 100%; }
 /* Sections */
 .section { padding: 72px 0; }
 .section--tint { background: var(--tint); }
-.section--cta { background: linear-gradient(180deg, #fff, var(--tint)); }
+.section--cta { background: linear-gradient(180deg, var(--bg), var(--tint)); }
 .section__more { margin-top: 24px; }
 .page { padding-top: 48px; padding-bottom: 80px; }
 .pullquote {
@@ -199,7 +356,7 @@ img, svg { max-width: 100%; }
 .grid--4 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
 .grid--3 { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
 .card {
-  background: #fff;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 24px;
@@ -218,7 +375,7 @@ img, svg { max-width: 100%; }
   color: var(--text);
   font-weight: 600;
 }
-.tabs a.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tabs a.active { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
 .split { display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; align-items: center; }
 .split__figure { margin: 0; }
 .checklist { padding-left: 0; list-style: none; }
@@ -247,7 +404,7 @@ img, svg { max-width: 100%; }
   height: 30px;
   margin-right: 10px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-fill);
   color: #fff;
   font-size: 0.95rem;
 }
@@ -295,7 +452,12 @@ img, svg { max-width: 100%; }
   .manual__nav { position: static; }
   .manual__nav nav { flex-direction: row; flex-wrap: wrap; }
   .section { padding: 48px 0; }
-  .nav-toggle { display: inline-block; }
+  .hero-scene { max-height: 340px; }
+}
+
+/* The navigation with its icons and the theme switch needs more room, so the menu collapses earlier. */
+@media (max-width: 1020px) {
+  .nav-toggle { display: inline-block; margin-left: auto; }
   .nav {
     display: none;
     position: absolute;
@@ -304,15 +466,43 @@ img, svg { max-width: 100%; }
     right: 0;
     flex-direction: column;
     align-items: stretch;
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
     padding: 12px 20px 20px;
   }
   .nav--open { display: flex; }
   .button--small { margin: 8px 0 0; text-align: center; }
-  .hero-scene { max-height: 340px; }
+}
+
+/* Small phones: drop the sun and moon so the logo, menu button and switch fit on one line. */
+@media (max-width: 380px) {
+  .site-header__inner { gap: 10px; }
+  .theme-toggle__icon { display: none; }
+}
+
+/*
+ * Dark theme for the home and office diagrams. Their colours are SVG presentation attributes
+ * (see components/diagrams.tsx), so they are re-mapped here by attribute value. The outdoor
+ * event illustration paints its own sky and keeps its colours.
+ */
+[data-theme='dark'] .diagram:not([aria-labelledby='event-diagram-title']) {
+  & [fill='#fff'] { fill: var(--surface); }
+  & [fill='#eff6ff'] { fill: #172554; }
+  & [fill='#dbeafe'] { fill: #1e3a8a; }
+  & [fill='#f1f5f9'] { fill: #1e293b; }
+  & [fill='#1e3a8a'] { fill: #bfdbfe; }
+  & [fill='#475569'] { fill: #94a3b8; }
+  & [fill='#2563eb'] { fill: #62a6ff; }
+  & [fill='#dc2626'] { fill: #f87171; }
+  & [stroke='#1e3a8a'] { stroke: #93c5fd; }
+  & [stroke='#cbd5e1'] { stroke: #334155; }
+  & [stroke='#2563eb'] { stroke: #62a6ff; }
+  & [stroke='#dc2626'] { stroke: #f87171; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
+  /* Near-zero rather than "none" so animationend still fires for page swaps. */
+  .page-transition--enter,
+  .page-transition--exit { animation-duration: 0.01ms; }
 }

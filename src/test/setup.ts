@@ -4,8 +4,13 @@ import { afterEach, beforeEach, vi } from 'vitest'
 import { resetLatestReleaseCache } from '../lib/release'
 import { resetReleaseNotesCache } from '../lib/releaseNotes'
 
-/** No test may reach the real network: the release lookup fails unless a test stubs `fetch` itself. */
+/**
+ * No test may reach the real network: the release lookup fails unless a test stubs `fetch` itself.
+ * Every test also starts in the light theme with no saved theme choice.
+ */
 beforeEach(() => {
+  localStorage.clear()
+  delete document.documentElement.dataset.theme
   vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('network disabled in tests'))))
 })
 
